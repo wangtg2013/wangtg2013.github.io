@@ -1,1 +1,39 @@
-Hello world
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload to Azure</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1336.0/aws-sdk.min.js"></script>
+</head>
+<body>
+    <h2>Upload File to S3</h2>
+    <label>Azure Blob SAS URL:</label>
+    <input type="text" id="SasURL" placeholder="Enter shared access signature" /><br>
+    <input type="file" id="fileInput" />
+    <button onclick="uploadFile()">Upload</button>
+    <p id="status"></p>
+    
+    <script>
+        const { BlobServiceClient } = require("@azure/storage-blob");
+
+        const blobSasUrl = document.getElementById('SasURL').value;
+        const blobServiceClient = new BlobServiceClient(blobSasUrl);
+
+        const containerName = "demo"
+        const containerClient = blobServiceClient.getContainerClient(containerName);
+
+        async function uploadFile(file) {
+            console.log("Upload function called");
+            let status = document.getElementById('status');
+            const blockBlobClient = containerClient.getBlockBlobClient(file.name);
+            await blockBlobClient.uploadBrowserData(file, { blockSize: 4 * 1024 * 1024, concurrency: 20 }); // Adjust parameters as needed
+        }
+
+        // Call the function
+        const fileInput = document.getElementById("fileInput");
+            fileInput.addEventListener("change", async (event) => {
+            const file = event.target.files[0];
+            await uploadFile(file);
+        });
+    </script>
+</body>
+</html>
