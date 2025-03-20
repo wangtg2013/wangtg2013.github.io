@@ -6,15 +6,23 @@
     <title>Upload File to Azure Blob Storage</title>
 </head>
 <body>
-    <h1>Upload File to Azure Blob Storage</h1>
+    <h2>Azure Blob Storage Info</h2>
     <label>Storage Account:</label>
     <input type="text" id="accountName" placeholder="Enter your storage account" /><br>
     <label>Container:</label>
     <input type="text" id="containerName" placeholder="Enter your container name" /><br>
     <label>SAS Token:</label>
     <input type="text" id="SasToken" placeholder="Enter your SAS token" /><br>
+    <h2>AWS S3 Info</h2>
+    <label>AWS Access Key ID:</label>
+    <input type="text" id="accessKey" placeholder="Enter Access Key ID" /><br>
+    <label>AWS Secret Access Key:</label>
+    <input type="text" id="secretKey" placeholder="Enter Secret Access Key" /><br>
+    <label>Bucket Name:</label>
+    <input type="text" id="bucketName" placeholder="Enter Bucket Name" /><br>
+    <h2>Files to be uploaded</h2>
     <form id="uploadForm">
-        <input type="file" id="fileInput" required>
+        <input type="file" id="fileInput" multiple required>
         <button type="submit">Upload</button>
     </form>
 
@@ -25,25 +33,15 @@
         const fileInput = document.getElementById('fileInput');
         const status = document.getElementById('status');
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
 
+        async function uploadAzure(file) {
+            status.innerHTML += 'Uploading '+ file.name + ' to Azure...<br>';
             const accountName = document.getElementById('accountName').value;
             const containerName = document.getElementById('containerName').value;
             const SasToken = document.getElementById('SasToken').value;
-            const file = fileInput.files[0];
-
-            if (!file) {
-                status.textContent = 'Please select a file.';
-                return;
-            }
-            const filename = file.name
-            
-            // The sasURL
-            const sasUrl = 'https://' + accountName + '.blob.core.windows.net/' + containerName + '/' + filename + '?' + SasToken;
+            const sasUrl = 'https://' + accountName + '.blob.core.windows.net/' + containerName + '/' + file.name + '?' + SasToken;
             
             try {
-                status.textContent = 'Uploading...';
 
                 // Upload the file using the SAS URL
                 const response = await fetch(sasUrl, {
@@ -56,14 +54,29 @@
                 });
 
                 if (response.ok) {
-                    status.textContent = 'File uploaded successfully!';
+                    status.innerHTML += file.name + ' uploaded successfully!<br>';
                 } else {
-                    status.textContent = 'Failed to upload file.';
+                    status.innerHTML += file,name + ' to upload file.<br>';
                 }
             } catch (error) {
                 console.error(error);
                 status.textContent = sasUrl;
             }
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (fileInput.files.length == 0) {
+                status.textContent = 'Please select at least one file.';
+                return;
+            }
+
+            let output = ""
+            for (var i = 0; i < fileInput.files.length; i ++) {
+                uploadAzure(fileInput.files[i])
+            }
+
         });
     </script>
 </body>
