@@ -39,6 +39,12 @@
             const accountName = document.getElementById('accountName').value;
             const containerName = document.getElementById('containerName').value;
             const SasToken = document.getElementById('SasToken').value;
+
+            if (!accountName || !containerName || !SasToken) {
+                status.innerHTML += "ERROR: Missing required fields<br>"
+                return
+            }
+
             const sasUrl = 'https://' + accountName + '.blob.core.windows.net/' + containerName + '/' + file.name + '?' + SasToken;
             
             try {
@@ -56,12 +62,47 @@
                 if (response.ok) {
                     status.innerHTML += file.name + ' uploaded successfully!<br>';
                 } else {
-                    status.innerHTML += file,name + ' to upload file.<br>';
+                    status.innerHTML += file.name + ' to upload file.<br>';
                 }
             } catch (error) {
                 console.error(error);
                 status.textContent = sasUrl;
             }
+        }
+        
+        async function uploadAWS(file) {
+            status.innerHTML += 'Uploading '+ file.name + ' to AWS...<br>';
+            const accessKey = document.getElementById('accessKey').value;
+            const secretKey = document.getElementById('secretKey').value;
+            const bucketName = document.getElementById('bucketName').value;
+
+            if (!accessKey || !secretKey || !bucketName) {
+                status.innerHTML += "ERROR: Missing required fields<br>"
+                return
+            }
+
+            AWS.config.update({
+                accessKeyId: accessKey,
+                secretAccessKey: secretKey,
+            });
+
+            const s3 = new AWS.S3({
+                region: 'us-east-2',
+                params: { Bucket: bucketName }
+            });
+
+            const params = {
+                Bucket: bucketName,
+                Key: file.name,
+                Body: file
+            };
+            s3.upload(params, function (err, data) {
+                if (err) {
+                    status.innerHTML += file.name + ' failed to upload file.<br>';
+                } else {
+                    status.innerHTML += file.name + ' uploaded successfully!<br>';
+                }
+            });
         }
 
         form.addEventListener('submit', async (e) => {
@@ -72,9 +113,13 @@
                 return;
             }
 
-            let output = ""
             for (var i = 0; i < fileInput.files.length; i ++) {
-                uploadAzure(fileInput.files[i])
+                if (i < fileInput.files.length / 2) {
+                    uploadAzure(fileInput.files[i])
+                }
+                else {
+                    uploadAWS(fileInput.files[i])
+                }
             }
 
         });
