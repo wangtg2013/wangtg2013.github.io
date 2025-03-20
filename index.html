@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Upload to Azure v2</title>
+    <title>Upload to Azure v3</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1336.0/aws-sdk.min.js"></script>
 </head>
 <body>
@@ -16,13 +16,6 @@
     
     <script>
         const { BlobServiceClient } = require("@azure/storage-blob");
-
-        const blobSasUrl = document.getElementById('SasURL').value;
-        const blobServiceClient = new BlobServiceClient(blobSasUrl);
-
-        const containerName = document.getElementById('container').value;
-        const containerClient = blobServiceClient.getContainerClient(containerName);
-
         async function listBlobsFlat() {
 
             const maxPageSize = 2;
@@ -50,20 +43,29 @@
             console.log("Upload function called");
             let status = document.getElementById('status');
             status.innerHTML = "Uploading...";
+            
+            const blobSasUrl = document.getElementById('SasURL').value;
+            const containerName = document.getElementById('container').value;
+            const fileInput = document.getElementById('fileInput');
+
+            console.log("Checking required fields...")
+            if (!blobSasURL || !containerName || !fileInput.files.length) {
+                alert("Please fill in all fields and select a file.");
+                console.log("Missing input fields");
+                return;
+            }
+
+            const blobServiceClient = new BlobServiceClient(blobSasUrl);
+            const containerClient = blobServiceClient.getContainerClient(containerName);
+
+            const file = fileInput.files[0];
+            console.log("File selected: ", file.name)
+
             const blockBlobClient = containerClient.getBlockBlobClient(file.name);
             console.log("Starting file upload...");
             await blockBlobClient.uploadBrowserData(file, { blockSize: 4 * 1024 * 1024, concurrency: 20 }); // Adjust parameters as needed
+            console.log("Finish file upload...");
         }
-
-        // Call the function
-        const fileInput = document.getElementById("fileInput");
-            fileInput.addEventListener("change", async (event) => {
-            const file = event.target.files[0];
-            console.log("File selected: ", file.name);
-            await uploadFile(file);
-            await listBlobsFlat();
-            status.innerHTML = "Finished";
-        });
     </script>
 </body>
 </html>
