@@ -8,6 +8,8 @@
     <h2>Upload File to S3</h2>
     <label>Azure Blob SAS URL:</label>
     <input type="text" id="SasURL" placeholder="Enter shared access signature" /><br>
+    <label>Container:</label>
+    <input type="text" id="container" placeholder="Enter Container Name" /><br>
     <input type="file" id="fileInput" />
     <button onclick="uploadFile()">Upload</button>
     <p id="status"></p>
@@ -18,7 +20,7 @@
         const blobSasUrl = document.getElementById('SasURL').value;
         const blobServiceClient = new BlobServiceClient(blobSasUrl);
 
-        const containerName = "demo"
+        const containerName = document.getElementById('container').value;
         const containerClient = blobServiceClient.getContainerClient(containerName);
 
         async function uploadFile(file) {
