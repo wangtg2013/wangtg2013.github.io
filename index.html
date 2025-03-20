@@ -23,10 +23,36 @@
         const containerName = document.getElementById('container').value;
         const containerClient = blobServiceClient.getContainerClient(containerName);
 
+        async function listBlobsFlat() {
+
+            const maxPageSize = 2;
+
+            // Some options for filtering results
+            const listOptions = {
+                includeMetadata: true,
+                includeSnapshots: true,
+                prefix: '' // Filter results by blob name prefix
+            };
+
+            console.log("Blobs flat list (by page):");
+            for await (const response of containerClient
+                .listBlobsFlat(listOptions)
+                .byPage({ maxPageSize })) {
+                console.log("- Page:");
+                if (response.segment.blobItems) {
+                    for (const blob of response.segment.blobItems) {
+                        console.log(`  - ${blob.name}`);
+                    }
+                }
+            }
+        }
         async function uploadFile(file) {
             console.log("Upload function called");
             let status = document.getElementById('status');
+            status.innerHTML = "Uploading...";
+            console.log("File selected: ", file.name);
             const blockBlobClient = containerClient.getBlockBlobClient(file.name);
+            console.log("Starting file upload...");
             await blockBlobClient.uploadBrowserData(file, { blockSize: 4 * 1024 * 1024, concurrency: 20 }); // Adjust parameters as needed
         }
 
@@ -35,6 +61,7 @@
             fileInput.addEventListener("change", async (event) => {
             const file = event.target.files[0];
             await uploadFile(file);
+            await listBlobsFlat();
         });
     </script>
 </body>
