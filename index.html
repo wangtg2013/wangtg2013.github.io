@@ -1,71 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Upload to Azure v3</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1336.0/aws-sdk.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload File to Azure Blob Storage</title>
 </head>
 <body>
-    <h2>Upload File to Azure</h2>
-    <label>Azure Blob SAS URL:</label>
-    <input type="text" id="SasURL" placeholder="Enter shared access signature" /><br>
+    <h1>Upload File to Azure Blob Storage</h1>
+    <label>Storage Account:</label>
+    <input type="text" id="accountName" placeholder="Enter your storage account" /><br>
     <label>Container:</label>
-    <input type="text" id="container" placeholder="Enter Container Name" /><br>
-    <input type="file" id="fileInput" />
-    <button onclick="uploadFile()">Upload</button>
+    <input type="text" id="containerName" placeholder="Enter your container name" /><br>
+    <label>SAS Token:</label>
+    <input type="text" id="SasToken" placeholder="Enter your SAS token" /><br>
+    <form id="uploadForm">
+        <input type="file" id="fileInput" required>
+        <button type="submit">Upload</button>
+    </form>
+
     <p id="status"></p>
-    
+
     <script>
-        const { BlobServiceClient } = require("@azure/storage-blob");
-        async function listBlobsFlat() {
+        const form = document.getElementById('uploadForm');
+        const fileInput = document.getElementById('fileInput');
+        const status = document.getElementById('status');
 
-            const maxPageSize = 2;
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-            // Some options for filtering results
-            const listOptions = {
-                includeMetadata: true,
-                includeSnapshots: true,
-                prefix: '' // Filter results by blob name prefix
-            };
+            const accountName = document.getElementById('accountName').value;
+            const containerName = document.getElementById('containerName').value;
+            const SasToken = document.getElementById('SasToken').value;
+            const file = fileInput.files[0];
 
-            console.log("Blobs flat list (by page):");
-            for await (const response of containerClient
-                .listBlobsFlat(listOptions)
-                .byPage({ maxPageSize })) {
-                console.log("- Page:");
-                if (response.segment.blobItems) {
-                    for (const blob of response.segment.blobItems) {
-                        console.log(`  - ${blob.name}`);
-                    }
-                }
-            }
-        }
-        async function uploadFile() {
-            console.log("Upload function called");
-            let status = document.getElementById('status');
-            status.innerHTML = "Uploading...";
-            
-            const blobSasUrl = document.getElementById('SasURL').value;
-            const containerName = document.getElementById('container').value;
-            const fileInput = document.getElementById('fileInput');
-
-            console.log("Checking required fields...")
-            if (!blobSasURL || !containerName || !fileInput.files.length) {
-                alert("Please fill in all fields and select a file.");
-                console.log("Missing input fields");
+            if (!file) {
+                status.textContent = 'Please select a file.';
                 return;
             }
+            const filename = file.name
+            
+            // The sasURL
+            const sasUrl = 'https://' + accountName + '.blob.core.windows.net/' + containerName + '/' + filename + '?' + SasToken;
+            
+            try {
+                status.textContent = 'Uploading...';
 
-            const blobServiceClient = new BlobServiceClient(blobSasUrl);
-            const containerClient = blobServiceClient.getContainerClient(containerName);
+                // Upload the file using the SAS URL
+                const response = await fetch(sasUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'x-ms-blob-type': 'BlockBlob',
+                        'Content-Type': file.type,
+                    },
+                    body: file,
+                });
 
-            const file = fileInput.files[0];
-            console.log("File selected: ", file.name)
-
-            const blockBlobClient = containerClient.getBlockBlobClient(file.name);
-            console.log("Starting file upload...");
-            await blockBlobClient.uploadBrowserData(file, { blockSize: 4 * 1024 * 1024, concurrency: 20 }); // Adjust parameters as needed
-            console.log("Finish file upload...");
-        }
+                if (response.ok) {
+                    status.textContent = 'File uploaded successfully!';
+                } else {
+                    status.textContent = 'Failed to upload file.';
+                }
+            } catch (error) {
+                console.error(error);
+                status.textContent = sasUrl;
+            }
+        });
     </script>
 </body>
 </html>
