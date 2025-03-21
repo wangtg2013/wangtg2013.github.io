@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Files to Cloud</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1336.0/aws-sdk.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/azure-storage-blob/12.6.0/azure-storage-blob.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -250,13 +249,33 @@
                 return;
             }
 
-            for (var i = 0; i < fileInput.files.length; i ++) {
-                if (i < fileInput.files.length / 2) {
+            const azureSection = document.getElementById('section1');
+            const awsSection = document.getElementById('section2');
+
+            const azureCheckbox = azureSection.querySelector('input[type="checkbox"]');
+            const awsCheckbox = awsSection.querySelector('input[type="checkbox"]');
+
+            if (azureCheckbox.checked && !awsCheckbox.checked) {
+                for (var i = 0; i < fileInput.files.length; i ++) {
                     uploadAzure(fileInput.files[i])
                 }
-                else {
+            }
+            else if (!azureCheckbox.checked && awsCheckbox.checked) {
+                for (var i = 0; i < fileInput.files.length; i ++) {
                     uploadAWS(fileInput.files[i])
                 }
+            }
+            else if (azureCheckbox.checked && awsCheckbox.checked) {
+                for (var i = 0; i < fileInput.files.length; i ++) {
+                    if (i < fileInput.files.length / 2) {
+                        uploadAzure(fileInput.files[i])
+                    }
+                    else {
+                        uploadAWS(fileInput.files[i])
+                    }
+                }
+            }
+            else {
             }
 
         });
