@@ -36,10 +36,13 @@
         .section:last-child {
             margin-right: 0; /* Remove margin from the last section */
         }
-        .section-title {
+        .checkbox-container {
+            margin-bottom: 15px;
             font-size: 20px;
             font-weight: bold;
-            margin-bottom: 15px;
+        }
+        .checkbox-container label {
+            cursor: pointer;
         }
         .input-field {
             margin-bottom: 15px;
@@ -61,9 +64,6 @@
             background-color: #f0f0f0; /* Gray out disabled fields */
             color: #a0a0a0;
             cursor: not-allowed; /* Show "not-allowed" cursor */
-        }
-        .checkbox-container {
-            margin-bottom: 15px;
         }
         /* Overlay for disabled section */
         .disabled-overlay {
@@ -88,35 +88,33 @@
     </style>
 </head>
 <body>
-    <div class="page-title">Uploading files to Cloud</div>
+    <div class="page-title">Upload files to Cloud</div>
     <div class="sections-container">
         <div class="section" id="section1">
-            <div class="section-title">Azure Blob Storage</div>
             <div class="checkbox-container">
                 <label>
-                    <input type="checkbox" id="checkbox1" checked onchange="toggleFields('section1')"> Enable Azure
+                    <input type="checkbox" id="checkbox1" checked onchange="toggleFields('section1')"> Azure Blob Storage
                 </label>
             </div>
             <div class="input-field">
                 <label for="field1-1">Account:</label>
-                <input type="text" id="accountName" placeholder="Enter your storage account" name="field1-1">
+                <input type="text" id="accountName" placeholder="Enter Storage Account" name="field1-1">
             </div>
             <div class="input-field">
                 <label for="field1-2">SAS Token:</label>
-                <input type="text" id="SasToken" placeholder="Enter your SAS token" name="field1-2">
+                <input type="text" id="SasToken" placeholder="Enter SAS Token" name="field1-2">
             </div>
             <div class="input-field">
                 <label for="field1-3">Container:</label>
-                <input type="text" id="containerName" placeholder="Enter your container name" name="field1-3">
+                <input type="text" id="containerName" placeholder="Enter Container Name" name="field1-3">
             </div>
             <div class="disabled-overlay">Disabled</div>
         </div>
 
         <div class="section" id="section2">
-            <div class="section-title">Amazon S3</div>
             <div class="checkbox-container">
                 <label>
-                    <input type="checkbox" id="checkbox2" checked onchange="toggleFields('section2')"> Enable Amazon
+                    <input type="checkbox" id="checkbox2" checked onchange="toggleFields('section2')"> Amazon S3
                 </label>
             </div>
             <div class="input-field">
@@ -135,10 +133,9 @@
         </div>
 
         <div class="section" id="section3">
-            <div class="section-title">Google Cloud Storage</div>
             <div class="checkbox-container">
                 <label>
-                    <input type="checkbox" id="checkbox3" checked onchange="toggleFields('section3')"> Enable Google
+                    <input type="checkbox" id="checkbox3" checked onchange="toggleFields('section3')"> Google Cloud Storage
                 </label>
             </div>
             <div class="input-field">
