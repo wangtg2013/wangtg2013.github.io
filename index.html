@@ -3,25 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload File to Azure Blob Storage and AWS S3</title>
+    <title>Upload Files to Cloud</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.1336.0/aws-sdk.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/azure-storage-blob/12.6.0/azure-storage-blob.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .sections-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .section {
+            width: 30%;
+            border: 1px solid #ccc;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-right: 20px; /* Add space between sections */
+            position: relative; /* For overlay positioning */
+        }
+        .section:last-child {
+            margin-right: 0; /* Remove margin from the last section */
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .input-field {
+            margin-bottom: 15px;
+            position: relative; /* For overlay positioning */
+        }
+        .input-field label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .input-field input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            cursor: pointer; /* Default cursor */
+        }
+        .input-field input:disabled {
+            background-color: #f0f0f0; /* Gray out disabled fields */
+            color: #a0a0a0;
+            cursor: not-allowed; /* Show "not-allowed" cursor */
+        }
+        .checkbox-container {
+            margin-bottom: 15px;
+        }
+        /* Overlay for disabled section */
+        .disabled-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #888;
+            pointer-events: none; /* Allow clicks to pass through */
+            display: none; /* Hidden by default */
+        }
+        .section.disabled .disabled-overlay {
+            display: flex; /* Show overlay when section is disabled */
+        }
+    </style>
 </head>
 <body>
-    <h2>Azure Blob Storage Info</h2>
-    <label>Storage Account:</label>
-    <input type="text" id="accountName" placeholder="Enter your storage account" /><br>
-    <label>Container:</label>
-    <input type="text" id="containerName" placeholder="Enter your container name" /><br>
-    <label>SAS Token:</label>
-    <input type="text" id="SasToken" placeholder="Enter your SAS token" /><br>
-    <h2>AWS S3 Info</h2>
-    <label>AWS Access Key ID:</label>
-    <input type="text" id="accessKey" placeholder="Enter Access Key ID" /><br>
-    <label>AWS Secret Access Key:</label>
-    <input type="text" id="secretKey" placeholder="Enter Secret Access Key" /><br>
-    <label>Bucket Name:</label>
-    <input type="text" id="bucketName" placeholder="Enter Bucket Name" /><br>
-    <h2>Files to be uploaded</h2>
+    <div class="page-title">Uploading files to Cloud</div>
+    <div class="sections-container">
+        <div class="section" id="section1">
+            <div class="section-title">Azure Blob Storage</div>
+            <div class="checkbox-container">
+                <label>
+                    <input type="checkbox" id="checkbox1" checked onchange="toggleFields('section1')"> Enable Asure
+                </label>
+            </div>
+            <div class="input-field">
+                <label for="field1-1">Storage Account:</label>
+                <input type="text" id="accountName" placeholder="Enter your storage account" name="field1-1">
+            </div>
+            <div class="input-field">
+                <label for="field1-2">Container:</label>
+                <input type="text" id="containerName" placeholder="Enter your container name" name="field1-2">
+            </div>
+            <div class="input-field">
+                <label for="field1-3">SAS Token:</label>
+                <input type="text" id="SasToken" placeholder="Enter your SAS token" name="field1-3">
+            </div>
+            <div class="disabled-overlay">Disabled</div>
+        </div>
+
+        <div class="section" id="section2">
+            <div class="section-title">Amazon S3</div>
+            <div class="checkbox-container">
+                <label>
+                    <input type="checkbox" id="checkbox2" checked onchange="toggleFields('section2')"> Enable Amazon
+                </label>
+            </div>
+            <div class="input-field">
+                <label for="field2-1">Access Key ID:</label>
+                <input type="text" id="accessKey" placeholder="Enter Access Key ID" name="field2-1">
+            </div>
+            <div class="input-field">
+                <label for="field2-2">Secret Access Key:</label>
+                <input type="text" id="secretKey" placeholder="Enter Secret Access Key" name="field2-2">
+            </div>
+            <div class="input-field">
+                <label for="field2-3">Bucket Name:</label>
+                <input type="text"  id="bucketName" placeholder="Enter Bucket Name" name="field2-3">
+            </div>
+            <div class="disabled-overlay">Disabled</div>
+        </div>
+
+        <div class="section" id="section3">
+            <div class="section-title">Google Cloud Storage</div>
+            <div class="checkbox-container">
+                <label>
+                    <input type="checkbox" id="checkbox3" checked onchange="toggleFields('section3')"> Enable Google
+                </label>
+            </div>
+            <div class="input-field">
+                <label for="field3-1">Field 1:</label>
+                <input type="text" id="field3-1" name="field3-1">
+            </div>
+            <div class="input-field">
+                <label for="field3-2">Field 2:</label>
+                <input type="text" id="field3-2" name="field3-2">
+            </div>
+            <div class="input-field">
+                <label for="field3-3">Field 3:</label>
+                <input type="text" id="field3-3" name="field3-3">
+            </div>
+            <div class="disabled-overlay">Disabled</div>
+        </div>
+    </div>
+
+    <h2>Please select files</h2>
     <form id="uploadForm">
         <input type="file" id="fileInput" multiple required>
         <button type="submit">Upload</button>
@@ -123,6 +259,24 @@
                 }
             }
 
+        });
+
+        function toggleFields(sectionId) {
+            const section = document.getElementById(sectionId);
+            const inputs = section.querySelectorAll('input[type="text"]');
+            const checkbox = section.querySelector('input[type="checkbox"]');
+
+            // Toggle disabled state of inputs
+            inputs.forEach(input => {
+                input.disabled = !checkbox.checked;
+            });
+        }
+
+        // Initialize fields based on checkbox state on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleFields('section1');
+            toggleFields('section2');
+            toggleFields('section3');
         });
     </script>
 </body>
