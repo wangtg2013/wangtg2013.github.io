@@ -90,6 +90,27 @@
 <body>
     <div class="page-title">Upload files to Cloud</div>
     <div class="sections-container">
+        <div class="section" id="section2">
+            <div class="checkbox-container">
+                <label>
+                    <input type="checkbox" id="checkbox2" checked onchange="toggleFields('section2')"> Amazon S3
+                </label>
+            </div>
+            <div class="input-field">
+                <label for="field2-1">Access Key ID:</label>
+                <input type="text" id="accessKey" placeholder="Enter Access Key ID" name="field2-1">
+            </div>
+            <div class="input-field">
+                <label for="field2-2">Secret Access Key:</label>
+                <input type="text" id="secretKey" placeholder="Enter Secret Access Key" name="field2-2">
+            </div>
+            <div class="input-field">
+                <label for="field2-3">Bucket Name:</label>
+                <input type="text"  id="bucketName" placeholder="Enter Bucket Name" name="field2-3">
+            </div>
+            <div class="disabled-overlay">Disabled</div>
+        </div>
+
         <div class="section" id="section1">
             <div class="checkbox-container">
                 <label>
@@ -111,26 +132,6 @@
             <div class="disabled-overlay">Disabled</div>
         </div>
 
-        <div class="section" id="section2">
-            <div class="checkbox-container">
-                <label>
-                    <input type="checkbox" id="checkbox2" checked onchange="toggleFields('section2')"> Amazon S3
-                </label>
-            </div>
-            <div class="input-field">
-                <label for="field2-1">Access Key ID:</label>
-                <input type="text" id="accessKey" placeholder="Enter Access Key ID" name="field2-1">
-            </div>
-            <div class="input-field">
-                <label for="field2-2">Secret Access Key:</label>
-                <input type="text" id="secretKey" placeholder="Enter Secret Access Key" name="field2-2">
-            </div>
-            <div class="input-field">
-                <label for="field2-3">Bucket Name:</label>
-                <input type="text"  id="bucketName" placeholder="Enter Bucket Name" name="field2-3">
-            </div>
-            <div class="disabled-overlay">Disabled</div>
-        </div>
 
         <div class="section" id="section3">
             <div class="checkbox-container">
