@@ -93,7 +93,7 @@
         <div class="section" id="section2">
             <div class="checkbox-container">
                 <label>
-                    <input type="checkbox" id="checkbox2" checked onchange="toggleFields('section2')"> Amazon S3
+                    <input type="checkbox" id="checkbox2" onchange="toggleFields('section2')"> Amazon S3
                 </label>
             </div>
             <div class="input-field">
@@ -114,7 +114,7 @@
         <div class="section" id="section1">
             <div class="checkbox-container">
                 <label>
-                    <input type="checkbox" id="checkbox1" checked onchange="toggleFields('section1')"> Azure Blob Storage
+                    <input type="checkbox" id="checkbox1" onchange="toggleFields('section1')"> Azure Blob Storage
                 </label>
             </div>
             <div class="input-field">
@@ -136,7 +136,7 @@
         <div class="section" id="section3">
             <div class="checkbox-container">
                 <label>
-                    <input type="checkbox" id="checkbox3" checked onchange="toggleFields('section3')"> Google Cloud Storage
+                    <input type="checkbox" id="checkbox3" onchange="toggleFields('section3')"> Google Cloud Storage
                 </label>
             </div>
             <div class="input-field">
@@ -197,7 +197,7 @@
                 if (response.ok) {
                     status.innerHTML += file.name + ': uploaded to Azure successfully.<br>';
                 } else {
-                    status.innerHTML += file.name + ': uploaded to Azure failed.<br>';
+                    status.innerHTML += file.name + ': failed to uploaded to Azure.<br>';
                 }
             } catch (error) {
                 console.error(error);
@@ -233,7 +233,7 @@
             };
             s3.upload(params, function (err, data) {
                 if (err) {
-                    status.innerHTML += file.name + ': uploaded to AWS failed.<br>';
+                    status.innerHTML += file.name + ': failed to upload to AWS.<br>';
                 } else {
                     status.innerHTML += file.name + ': uploaded to AWS successfully.<br>';
                 }
