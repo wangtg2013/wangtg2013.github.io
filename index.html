@@ -172,7 +172,7 @@
 
 
         async function uploadAzure(file) {
-            status.innerHTML += 'Uploading '+ file.name + ' to Azure...<br>';
+            status.innerHTML += file.name + ': uploading to Azure...<br>';
             const accountName = document.getElementById('accountName').value;
             const containerName = document.getElementById('containerName').value;
             const SasToken = document.getElementById('SasToken').value;
@@ -197,9 +197,9 @@
                 });
 
                 if (response.ok) {
-                    status.innerHTML += file.name + ' uploaded successfully!<br>';
+                    status.innerHTML += file.name + ': uploaded to Asure successfully!<br>';
                 } else {
-                    status.innerHTML += file.name + ' to upload file.<br>';
+                    status.innerHTML += file.name + ': uploaded to Asure failed.<br>';
                 }
             } catch (error) {
                 console.error(error);
@@ -208,7 +208,7 @@
         }
         
         async function uploadAWS(file) {
-            status.innerHTML += 'Uploading '+ file.name + ' to AWS...<br>';
+            status.innerHTML += file.name + ': uploading to AWS...<br>';
             const accessKey = document.getElementById('accessKey').value;
             const secretKey = document.getElementById('secretKey').value;
             const bucketName = document.getElementById('bucketName').value;
@@ -235,9 +235,9 @@
             };
             s3.upload(params, function (err, data) {
                 if (err) {
-                    status.innerHTML += file.name + ' failed to upload file.<br>';
+                    status.innerHTML += file.name + ': uploaded to AWS failed.<br>';
                 } else {
-                    status.innerHTML += file.name + ' uploaded successfully!<br>';
+                    status.innerHTML += file.name + ': uploaded to AWS successfully!<br>';
                 }
             });
         }
