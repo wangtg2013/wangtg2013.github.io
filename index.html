@@ -94,7 +94,7 @@
             <div class="section-title">Azure Blob Storage</div>
             <div class="checkbox-container">
                 <label>
-                    <input type="checkbox" id="checkbox1" checked onchange="toggleFields('section1')"> Enable Asure
+                    <input type="checkbox" id="checkbox1" checked onchange="toggleFields('section1')"> Enable Azure
                 </label>
             </div>
             <div class="input-field">
@@ -146,7 +146,7 @@
                 <input type="text" id="field3-1" placeholder="Enter Project ID" name="field3-1">
             </div>
             <div class="input-field">
-                <label for="field3-2">Account Key:</label>
+                <label for="field3-2">Service Account Key:</label>
                 <input type="text" id="field3-2" placeholder="Enter Service Account Key" name="field3-2">
             </div>
             <div class="input-field">
@@ -172,7 +172,7 @@
 
 
         async function uploadAzure(file) {
-            status.innerHTML += file.name + ': uploading to Azure...<br>';
+            //status.innerHTML += file.name + ': uploading to Azure...<br>';
             const accountName = document.getElementById('accountName').value;
             const containerName = document.getElementById('containerName').value;
             const SasToken = document.getElementById('SasToken').value;
@@ -197,9 +197,9 @@
                 });
 
                 if (response.ok) {
-                    status.innerHTML += file.name + ': uploaded to Asure successfully!<br>';
+                    status.innerHTML += file.name + ': uploaded to Azure successfully.<br>';
                 } else {
-                    status.innerHTML += file.name + ': uploaded to Asure failed.<br>';
+                    status.innerHTML += file.name + ': uploaded to Azure failed.<br>';
                 }
             } catch (error) {
                 console.error(error);
@@ -208,7 +208,7 @@
         }
         
         async function uploadAWS(file) {
-            status.innerHTML += file.name + ': uploading to AWS...<br>';
+            //status.innerHTML += file.name + ': uploading to AWS...<br>';
             const accessKey = document.getElementById('accessKey').value;
             const secretKey = document.getElementById('secretKey').value;
             const bucketName = document.getElementById('bucketName').value;
