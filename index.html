@@ -98,11 +98,11 @@
             </div>
             <div class="input-field">
                 <label for="field2-1">Access Key ID:</label>
-                <input type="text" id="accessKey" placeholder="Enter Access Key ID" name="field2-1">
+                <input type="password" id="accessKey" placeholder="Enter Access Key ID" name="field2-1">
             </div>
             <div class="input-field">
                 <label for="field2-2">Secret Access Key:</label>
-                <input type="text" id="secretKey" placeholder="Enter Secret Access Key" name="field2-2">
+                <input type="password" id="secretKey" placeholder="Enter Secret Access Key" name="field2-2">
             </div>
             <div class="input-field">
                 <label for="field2-3">Bucket Name:</label>
@@ -123,7 +123,7 @@
             </div>
             <div class="input-field">
                 <label for="field1-2">SAS Token:</label>
-                <input type="text" id="SasToken" placeholder="Enter SAS Token" name="field1-2">
+                <input type="password" id="SasToken" placeholder="Enter SAS Token" name="field1-2">
             </div>
             <div class="input-field">
                 <label for="field1-3">Container:</label>
@@ -145,7 +145,7 @@
             </div>
             <div class="input-field">
                 <label for="field3-2">Service Account Key:</label>
-                <input type="text" id="field3-2" placeholder="Enter Service Account Key" name="field3-2">
+                <input type="password" id="field3-2" placeholder="Enter Service Account Key" name="field3-2">
             </div>
             <div class="input-field">
                 <label for="field3-3">Bucket name:</label>
@@ -281,7 +281,7 @@
 
         function toggleFields(sectionId) {
             const section = document.getElementById(sectionId);
-            const inputs = section.querySelectorAll('input[type="text"]');
+            const inputs = section.querySelectorAll('input[type="text"], input[type="password"]');
             const checkbox = section.querySelector('input[type="checkbox"]');
 
             // Toggle disabled state of inputs
