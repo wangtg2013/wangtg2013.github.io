@@ -159,6 +159,7 @@
     <form id="uploadForm">
         <input type="file" id="fileInput" multiple required>
         <button type="submit">Upload</button>
+        <button type="button" id="downloadBtn">Download</button>
     </form>
 
     <p id="status"></p>
@@ -240,6 +241,92 @@
             });
         }
 
+        async function downloadAndMergeAWS() {
+            const accessKey = document.getElementById('accessKey').value;
+            const secretKey = document.getElementById('secretKey').value;
+            const uploadBucketName = document.getElementById('bucketName').value;
+            const bucketName = uploadBucketName.replace('temp', 'output');
+
+            if (!accessKey || !secretKey || !bucketName) {
+                status.innerHTML += "ERROR: Missing required fields<br>";
+                return;
+            }
+
+            AWS.config.update({
+                accessKeyId: accessKey,
+                secretAccessKey: secretKey,
+            });
+
+            const s3 = new AWS.S3({
+                region: 'us-east-2',
+                params: { Bucket: bucketName }
+            });
+
+            try {
+                // List all objects in the bucket
+                const listParams = {
+                    Bucket: bucketName
+                };
+
+                const data = await s3.listObjectsV2(listParams).promise();
+
+                if (!data.Contents || data.Contents.length === 0) {
+                    status.innerHTML += "Bucket is empty<br>";
+                    return;
+                }
+
+                status.innerHTML += `Found ${data.Contents.length} files, processing the JSON file...<br>`;
+
+                // Filter and process only JSON files
+                const jsonFiles = data.Contents.filter(item => item.Key.endsWith('.json'));
+                const mergedData = [];
+
+                for (const item of jsonFiles) {
+                    const downloadParams = {
+                        Bucket: bucketName,
+                        Key: item.Key
+                    };
+
+                    try {
+                        const fileData = await s3.getObject(downloadParams).promise();
+                        const content = JSON.parse(fileData.Body.toString('utf-8'));
+
+                        // If the content is an array, merge its elements
+                        if (Array.isArray(content)) {
+                            mergedData.push(...content);
+                        } else {
+                            mergedData.push(content);
+                        }
+
+                        // status.innerHTML += `${item.Key}: processed successfully<br>`;
+                    } catch (err) {
+                        status.innerHTML += `${item.Key}: failed to process - ${err.message}<br>`;
+                    }
+                }
+
+                if (mergedData.length === 0) {
+                    status.innerHTML += "No valid JSON files found to merge<br>";
+                    return;
+                }
+
+                // Create and download the merged JSON
+                const mergedJson = JSON.stringify(mergedData, null, 2);
+                const blob = new Blob([mergedJson], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'merged-data.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                status.innerHTML += `Download Successfully!<br>`;
+            } catch (err) {
+                status.innerHTML += `ERROR: ${err.message}<br>`;
+            }
+        }
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -277,6 +364,15 @@
             else {
             }
 
+        });
+
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            // Determine which cloud service is selected
+            if (document.getElementById('checkbox2').checked) {
+                downloadAndMergeAWS();
+            } else {
+                status.innerHTML += 'Please select a cloud service first';
+            }
         });
 
         function toggleFields(sectionId) {
